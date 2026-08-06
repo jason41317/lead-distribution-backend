@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  sent
+  unsent
+  duplicate
+  failed
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Broker {
+  id           Int     @id @default(autoincrement())
+  name         String
+  active       Boolean @default(true)
+  dailyCap     Int
+  timezone     String
+  openingTime  String
+  closingTime  String
+  workingDays  Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deletedAt    DateTime?
+
+  leads         Lead[]
+  distributions DistributionBroker[]
+}
+
+model Form {
+  id         Int @id @default(autoincrement())
+  name       String
+  slug       String @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  deletedAt  DateTime?
+
+  distribution Distribution?
+  leads Lead[]
+  
+}
+
+model Distribution {
+
+  id        Int @id @default(autoincrement())
+  name      String
+  formId    Int @unique
+  form      Form @relation(fields: [formId], references: [id])
+  brokers   DistributionBroker[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model DistributionBroker {
+
+  id             Int @id @default(autoincrement())
+  distributionId Int
+  brokerId       Int
+  percentage     Int
+  active         Boolean @default(true)
+  distribution   Distribution @relation(fields: [distributionId], references: [id])
+  broker         Broker @relation(fields: [brokerId], references: [id])
+  @@unique([distributionId, brokerId])
+}
+
+model Lead {
+
+  id        Int @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String
+  ipAddress String
+  status    LeadStatus
+  createdAt DateTime @default(now())
+  brokerId  Int?
+  broker    Broker? @relation(fields: [brokerId], references: [id])
+  formId    Int
+  form      Form @relation(fields: [formId], references: [id])
+}
