@@ -3,10 +3,13 @@ import asyncHandler from "express-async-handler";
 import brokerService from "./service";
 import { CreateBrokerSchema, UpdateBrokerSchema } from "./schema";
 import { success } from "../../utils/response";
+import { getPagination } from "../../utils/pagination";
 
 class BrokerController {
   index = asyncHandler(async (req: Request, res: Response) => {
-    const brokers = await brokerService.findAll();
+    const { page, limit } = getPagination(req.query);
+    const search = String(req.query.search ?? "");
+    const brokers = await brokerService.findAll(page, limit, search);
 
     success(res, brokers);
   });

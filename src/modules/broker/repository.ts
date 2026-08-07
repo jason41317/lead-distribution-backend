@@ -2,15 +2,34 @@ import prisma from "../../prisma/prisma";
 import { Prisma } from "@prisma/client";
 
 class BrokerRepository {
-  findAll() {
-    return prisma.broker.findMany({
-      where: {
-        deletedAt: null,
+  async findAll(page: number, limit: number, search: string) {
+    const skip = (page - 1) * limit;
+    const whereClause = {
+      name: {
+        contains: search,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+      deletedAt: null,
+    };
+
+    const [items, total] = await prisma.$transaction([
+      prisma.broker.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+          id: "desc",
+        },
+        where: whereClause
+      }),
+
+      prisma.broker.count({
+        where: whereClause
+      }),
+    ]);
+
+    return {
+      items,
+      total,
+    };
   }
 
   findById(id: number) {

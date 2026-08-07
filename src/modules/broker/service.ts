@@ -4,47 +4,61 @@ import NotFoundError from "../../errors/NotFoundError";
 import { CreateBrokerRequest, UpdateBrokerRequest } from "./schema";
 
 class BrokerService {
-    async findAll() {
-        return brokerRepository.findAll();
+  async findAll(page: number, limit: number, search: string) {
+    const { items, total } = await brokerRepository.findAll(page, limit, search);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      items,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
+  }
+
+  async findById(id: number) {
+    const broker = await brokerRepository.findById(id);
+
+    if (!broker) {
+      throw new NotFoundError("Broker not found");
     }
 
-    async findById(id: number) {
-        const broker = await brokerRepository.findById(id);
+    return broker;
+  }
 
-        if (!broker) {
-            throw new NotFoundError("Broker not found");
-        }
+  async create(data: CreateBrokerRequest) {
+    return brokerRepository.create(data as Prisma.BrokerCreateInput);
+  }
 
-        return broker;
+  async update(id: number, data: UpdateBrokerRequest) {
+    const broker = await brokerRepository.findById(id);
+
+    if (!broker) {
+      throw new NotFoundError("Broker not found");
     }
 
-    async create(data: CreateBrokerRequest) {
-        return brokerRepository.create(data as Prisma.BrokerCreateInput);
+    return brokerRepository.update(id, data as Prisma.BrokerUpdateInput);
+  }
+
+  async delete(id: number) {
+    const broker = await brokerRepository.findById(id);
+
+    if (!broker) {
+      throw new NotFoundError("Broker not found");
     }
+    await brokerRepository.update(id, {
+      deletedAt: new Date(),
+    } as Prisma.BrokerUpdateInput);
+    // await brokerRepository.delete(id);
 
-    async update(id: number, data: UpdateBrokerRequest) {
-        const broker = await brokerRepository.findById(id);
-
-        if (!broker) {
-            throw new NotFoundError("Broker not found");
-        }
-
-        return brokerRepository.update(id, data as Prisma.BrokerUpdateInput);
-    }
-
-    async delete(id: number) {
-        const broker = await brokerRepository.findById(id);
-
-        if (!broker) {
-            throw new NotFoundError("Broker not found");
-        }
-        await brokerRepository.update(id, { deletedAt: new Date() } as Prisma.BrokerUpdateInput);
-        // await brokerRepository.delete(id);
-
-        return {
-            message: "Broker deleted successfully",
-        };
-    }
+    return {
+      message: "Broker deleted successfully",
+    };
+  }
 }
 
 export default new BrokerService();
