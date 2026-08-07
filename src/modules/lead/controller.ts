@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import leadService from "./service";
-import { CreateLeadSchema, UpdateLeadSchema } from "./schema";
-import { success } from "../../utils/response";
-import { getPagination } from "../../utils/pagination";
+import leadService from "./service.js";
+import { CreateLeadSchema, UpdateLeadSchema } from "./schema.js";
+import { success } from "../../utils/response.js";
+import { getPagination } from "../../utils/pagination.js";
 
 class LeadController {
   index = asyncHandler(async (req: Request, res: Response) => {

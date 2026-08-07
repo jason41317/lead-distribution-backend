@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
-import authRepository from "./repository";
-import { generateToken } from "../../utils/jwt";
-import UnauthorizedError from "../../errors/UnauthorizedError";
+import authRepository from "./repository.js";
+import { generateToken } from "../../utils/jwt.js";
+import UnauthorizedError from "../../errors/UnauthorizedError.js";
 
 class AuthService {
   async login(email: string, password: string) {

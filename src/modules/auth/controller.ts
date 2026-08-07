@@ -1,7 +1,7 @@
-import authService from "./service";
-import { LoginSchema } from "./schema";
+import authService from "./service.js";
+import { LoginSchema } from "./schema.js";
 import asyncHandler from "express-async-handler";
-import { success } from "../../utils/response";
+import { success } from "../../utils/response.js";
 
 class AuthController {
   login = asyncHandler(async (req, res) => {

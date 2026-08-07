@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import formRepository from "./repository";
-import NotFoundError from "../../errors/NotFoundError";
-import { CreateFormRequest, UpdateFormRequest } from "./schema";
-import ValidationError from "../../errors/ValidationError";
+import formRepository from "./repository.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import { CreateFormRequest, UpdateFormRequest } from "./schema.js";
+import ValidationError from "../../errors/ValidationError.js";
 
 class FormService {
   async findAll() {

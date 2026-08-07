@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import formService from "./service";
-import { CreateFormSchema, UpdateFormSchema } from "./schema";
-import { success } from "../../utils/response";
+import formService from "./service.js";
+import { CreateFormSchema, UpdateFormSchema } from "./schema.js";
+import { success } from "../../utils/response.js";
 
 class FormController {
   index = asyncHandler(async (req: Request, res: Response) => {

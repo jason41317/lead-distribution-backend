@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import brokerRepository from "./repository";
-import NotFoundError from "../../errors/NotFoundError";
-import { CreateBrokerRequest, UpdateBrokerRequest } from "./schema";
+import brokerRepository from "./repository.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import { CreateBrokerRequest, UpdateBrokerRequest } from "./schema.js";
 
 class BrokerService {
   async findAll(page: number, limit: number, search: string) {

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import brokerService from "./service";
-import { CreateBrokerSchema, UpdateBrokerSchema } from "./schema";
-import { success } from "../../utils/response";
-import { getPagination } from "../../utils/pagination";
+import brokerService from "./service.js";
+import { CreateBrokerSchema, UpdateBrokerSchema } from "./schema.js";
+import { success } from "../../utils/response.js";
+import { getPagination } from "../../utils/pagination.js";
 
 class BrokerController {
   index = asyncHandler(async (req: Request, res: Response) => {

@@ -1,1 +1,1 @@
-export { default as distributionRoutes } from "./routes";
+export { default as distributionRoutes } from "./routes.js";

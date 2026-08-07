@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authRoutes } from "../modules/auth";
-import { brokerRoutes } from "../modules/broker";
-import { formRoutes } from "../modules/form";
-import { distributionRoutes } from "../modules/distribution";
-import { leadRoutes } from "../modules/lead";
+import { authRoutes } from "../modules/auth/index.js";
+import { brokerRoutes } from "../modules/broker/index.js";
+import { formRoutes } from "../modules/form/index.js";
+import { distributionRoutes } from "../modules/distribution/index.js";
+import { leadRoutes } from "../modules/lead/index.js";
 
 const router = Router();
 

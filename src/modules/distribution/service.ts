@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
-import distributionRepository from "./repository";
-import formRepository from "../form/repository";
-import NotFoundError from "../../errors/NotFoundError";
-import { CreateDistributionBrokersRequest, CreateDistributionRequest, UpdateDistributionRequest } from "./schema";
-import ValidationError from "../../errors/ValidationError";
+import distributionRepository from "./repository.js";
+import formRepository from "../form/repository.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import { CreateDistributionBrokersRequest, CreateDistributionRequest, UpdateDistributionRequest } from "./schema.js";
+import ValidationError from "../../errors/ValidationError.js";
 
 class DistributionService {
   async findAll() {

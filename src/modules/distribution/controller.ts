@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import distributionService from "./service";
-import { CreateDistributionBrokersSchema, CreateDistributionSchema, UpdateDistributionSchema } from "./schema";
-import { success } from "../../utils/response";
+import distributionService from "./service.js";
+import { CreateDistributionBrokersSchema, CreateDistributionSchema, UpdateDistributionSchema } from "./schema.js";
+import { success } from "../../utils/response.js";
 
 class DistributionController {
   index = asyncHandler(async (req: Request, res: Response) => {

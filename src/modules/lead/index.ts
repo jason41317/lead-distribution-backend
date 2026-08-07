@@ -1,1 +1,1 @@
-export { default as leadRoutes } from "./routes";
+export { default as leadRoutes } from "./routes.js";

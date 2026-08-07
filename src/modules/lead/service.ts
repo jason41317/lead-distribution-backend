@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import leadRepository from "./repository";
-import NotFoundError from "../../errors/NotFoundError";
-import { CreateLeadRequest, UpdateLeadRequest } from "./schema";
+import leadRepository from "./repository.js";
+import NotFoundError from "../../errors/NotFoundError.js";
+import { CreateLeadRequest, UpdateLeadRequest } from "./schema.js";
 
 class LeadService {
     async findAll(page: number, limit: number, search: string) {
