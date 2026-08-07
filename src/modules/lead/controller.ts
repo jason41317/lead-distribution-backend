@@ -3,10 +3,13 @@ import asyncHandler from "express-async-handler";
 import leadService from "./service";
 import { CreateLeadSchema, UpdateLeadSchema } from "./schema";
 import { success } from "../../utils/response";
+import { getPagination } from "../../utils/pagination";
 
 class LeadController {
   index = asyncHandler(async (req: Request, res: Response) => {
-    const leads = await leadService.findAll();
+    const { page, limit } = getPagination(req.query);
+    const search = String(req.query.search ?? "");
+    const leads = await leadService.findAll(page, limit, search);
 
     success(res, leads);
   });

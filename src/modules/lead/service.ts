@@ -4,9 +4,21 @@ import NotFoundError from "../../errors/NotFoundError";
 import { CreateLeadRequest, UpdateLeadRequest } from "./schema";
 
 class LeadService {
-    async findAll() {
-        return leadRepository.findAll();
-    }
+    async findAll(page: number, limit: number, search: string) {
+        const { items, total } = await leadRepository.findAll(page, limit, search);
+    
+        const totalPages = Math.ceil(total / limit);
+    
+        return {
+          items,
+          meta: {
+            page,
+            limit,
+            total,
+            totalPages,
+          },
+        };
+      }
 
     async findById(id: number) {
         const lead = await leadRepository.findById(id);

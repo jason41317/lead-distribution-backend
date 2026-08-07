@@ -52,7 +52,7 @@ model Form {
   updatedAt  DateTime @updatedAt
   deletedAt  DateTime?
 
-  distribution Distribution?
+  distributions Distribution[]
   leads Lead[]
   
 }
