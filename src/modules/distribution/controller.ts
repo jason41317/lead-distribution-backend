@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import distributionService from "./service";
-import { CreateDistributionSchema, UpdateDistributionSchema } from "./schema";
+import { CreateDistributionBrokersSchema, CreateDistributionSchema, UpdateDistributionSchema } from "./schema";
 import { success } from "../../utils/response";
 
 class DistributionController {
@@ -42,6 +42,17 @@ class DistributionController {
     const response = await distributionService.delete(Number(req.params.id));
 
     success(res, null, response.message);
+  });
+
+  createDistributionBrokers = asyncHandler(async (req: Request, res: Response) => {
+    const body = CreateDistributionBrokersSchema.parse(req.body);
+
+    const distributionBrokers = await distributionService.createDistributionBrokers(
+      Number(req.params.id),
+      body
+    );
+
+    success(res, distributionBrokers, "Distribution brokers created successfully", 201);
   });
 }
 

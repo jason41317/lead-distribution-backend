@@ -22,26 +22,32 @@ CREATE TABLE `Broker` (
     `workingDays` JSON NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `LeadForm` (
+CREATE TABLE `Form` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
-    UNIQUE INDEX `LeadForm_slug_key`(`slug`),
+    UNIQUE INDEX `Form_slug_key`(`slug`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Distribution` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
     `formId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     UNIQUE INDEX `Distribution_formId_key`(`formId`),
     PRIMARY KEY (`id`)
@@ -64,7 +70,6 @@ CREATE TABLE `Lead` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `normalizedEmail` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
     `ipAddress` VARCHAR(191) NOT NULL,
     `status` ENUM('sent', 'unsent', 'duplicate', 'failed') NOT NULL,
@@ -76,7 +81,7 @@ CREATE TABLE `Lead` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Distribution` ADD CONSTRAINT `Distribution_formId_fkey` FOREIGN KEY (`formId`) REFERENCES `LeadForm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Distribution` ADD CONSTRAINT `Distribution_formId_fkey` FOREIGN KEY (`formId`) REFERENCES `Form`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `DistributionBroker` ADD CONSTRAINT `DistributionBroker_distributionId_fkey` FOREIGN KEY (`distributionId`) REFERENCES `Distribution`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -88,4 +93,4 @@ ALTER TABLE `DistributionBroker` ADD CONSTRAINT `DistributionBroker_brokerId_fke
 ALTER TABLE `Lead` ADD CONSTRAINT `Lead_brokerId_fkey` FOREIGN KEY (`brokerId`) REFERENCES `Broker`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Lead` ADD CONSTRAINT `Lead_formId_fkey` FOREIGN KEY (`formId`) REFERENCES `LeadForm`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Lead` ADD CONSTRAINT `Lead_formId_fkey` FOREIGN KEY (`formId`) REFERENCES `Form`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

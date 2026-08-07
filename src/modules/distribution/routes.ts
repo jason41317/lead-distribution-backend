@@ -12,4 +12,6 @@ router.post("/", distributionController.store);
 router.put("/:id", distributionController.update);
 router.delete("/:id", distributionController.destroy);
 
+router.post("/:id/brokers", distributionController.createDistributionBrokers);
+
 export default router;
