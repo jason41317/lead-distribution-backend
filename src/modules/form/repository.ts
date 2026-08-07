@@ -13,11 +13,21 @@ class FormRepository {
     });
   }
 
+  findBySlug(slug: string) {
+    return prisma.form.findUnique({
+        where: {
+          slug,
+          deletedAt: null,
+        },
+    });
+  }
+
   findById(id: number) {
     return prisma.form.findUnique({
       where: {
         id,
-      },
+        deletedAt: null
+      }
     });
   }
 

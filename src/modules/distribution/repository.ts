@@ -1,4 +1,3 @@
-import { identity } from "effect/Schedule";
 import prisma from "../../prisma/prisma";
 import { Prisma } from "@prisma/client";
 
@@ -11,6 +10,9 @@ class DistributionRepository {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        form: true
+      }
     });
   }
 
@@ -19,12 +21,15 @@ class DistributionRepository {
       where: {
         id,
       },
+      include: {
+        brokers: true
+      }
     });
   }
 
   create(data: Prisma.DistributionCreateInput) {
     return prisma.distribution.create({
-      data,
+      data
     });
   }
 
@@ -45,11 +50,11 @@ class DistributionRepository {
     });
   }
 
-  createDistributionBrokers(
+  async createDistributionBrokers(
     id: number,
     data: Prisma.DistributionBrokerCreateManyInput[],
   ) {
-    prisma.distributionBroker.deleteMany({
+    await prisma.distributionBroker.deleteMany({
       where: { distributionId: id },
     });
 

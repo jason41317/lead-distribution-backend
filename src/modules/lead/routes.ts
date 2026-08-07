@@ -1,15 +1,16 @@
 import { Router } from "express";
-import brokerController from "./controller";
+import leadController from "./controller";
 import authMiddleware from "../../middleware/auth.middleware";
 
 const router = Router();
 
-router.post("/", brokerController.store);
+router.post("/public", leadController.storePublic);
 
 router.use(authMiddleware);
 
-router.get("/", brokerController.index);
-router.get("/:id", brokerController.show);
+router.post("/", leadController.store);
+router.get("/", leadController.index);
+router.get("/:id", leadController.show);
 
 
 export default router;

@@ -33,10 +33,20 @@ class DistributionService {
       throw new ValidationError("Only one distribution can be created");
     }
 
-    return distributionRepository.create({
+    const distribution = await distributionRepository.create({
       form: { connect: { id: data.formId } },
       name: data.name,
     } as Prisma.DistributionCreateInput);
+
+    if (data && data.brokers && data.brokers.length > 0) {
+      await distributionRepository.createDistributionBrokers(distribution.id, 
+        data.brokers.map((broker) => (
+          { ...broker, distributionId: distribution.id }
+        ))  
+      )
+    }
+
+    return distribution;
   }
 
   async update(id: number, data: UpdateDistributionRequest) {
@@ -46,7 +56,19 @@ class DistributionService {
       throw new NotFoundError("Distribution not found");
     }
 
-    return distributionRepository.update(id, data as Prisma.DistributionUpdateInput);
+    const updatedDistribution = await distributionRepository.update(id, {
+      form: { connect: { id: data.formId } },
+      name: data.name,
+    } as Prisma.DistributionUpdateInput);
+
+    if (data && data.brokers && data.brokers.length > 0) {
+      await distributionRepository.createDistributionBrokers(id, 
+        data.brokers.map((broker) => (
+          { ...broker, distributionId: id }
+        ))  
+      )
+    }
+    return updatedDistribution
   }
 
   async delete(id: number) {
@@ -74,7 +96,12 @@ class DistributionService {
       throw new NotFoundError("Distribution not found");
     }
 
-    return distributionRepository.createDistributionBrokers(id, data);
+    return distributionRepository.createDistributionBrokers(id, data.map((d) => (
+      {
+        ...d,
+        distributionId: id
+      }
+    )));
   }
 }
 

@@ -9,6 +9,16 @@ class FormService {
     return formRepository.findAll();
   }
 
+  async findBySlug(slug: string) {
+    const form = await formRepository.findBySlug(slug);
+
+    if (!form) {
+      throw new NotFoundError("Form not found");
+    }
+
+    return form;
+  }
+
   async findById(id: number) {
     const form = await formRepository.findById(id);
 

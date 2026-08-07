@@ -11,6 +11,12 @@ class FormController {
     success(res, forms);
   });
 
+  showBySlug = asyncHandler(async (req: Request, res: Response) => {
+    const form = await formService.findBySlug(String(req.params.slug));
+
+    success(res, form);
+  });
+
   show = asyncHandler(async (req: Request, res: Response) => {
     const form = await formService.findById(Number(req.params.id));
 

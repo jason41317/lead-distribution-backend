@@ -4,6 +4,8 @@ import authMiddleware from "../../middleware/auth.middleware";
 
 const router = Router();
 
+router.get("/slug/:slug", formController.showBySlug);
+
 router.use(authMiddleware);
 
 router.get("/", formController.index);

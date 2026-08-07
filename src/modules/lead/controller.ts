@@ -12,17 +12,25 @@ class LeadController {
   });
 
   show = asyncHandler(async (req: Request, res: Response) => {
-    const broker = await leadService.findById(Number(req.params.id));
+    const lead = await leadService.findById(Number(req.params.id));
 
-    success(res, broker);
+    success(res, lead);
   });
 
   store = asyncHandler(async (req: Request, res: Response) => {
     const body = CreateLeadSchema.parse(req.body);
 
-    const broker = await leadService.create(body);
+    const lead = await leadService.create(body);
 
-    success(res, broker, "Lead created successfully", 201);
+    success(res, lead, "Lead created successfully", 201);
+  });
+
+  storePublic = asyncHandler(async (req: Request, res: Response) => {
+    const body = CreateLeadSchema.parse(req.body);
+
+    const lead = await leadService.create(body);
+
+    success(res, lead, "Lead created successfully", 201);
   });
 }
 

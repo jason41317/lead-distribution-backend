@@ -61,7 +61,7 @@ model Distribution {
 
   id        Int @id @default(autoincrement())
   name      String
-  formId    Int @unique
+  formId    Int
   form      Form @relation(fields: [formId], references: [id])
   brokers   DistributionBroker[]
   createdAt DateTime @default(now())
