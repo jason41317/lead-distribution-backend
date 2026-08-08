@@ -5,7 +5,8 @@ export const CreateLeadSchema = z.object({
     email: z.email(),
     phone: z.string().min(1),
     ipAddress: z.string().min(1),
-    formId: z.number().min(1)
+    formId: z.number().min(1),
+    brokerId: z.number().optional()
 });
 
 export const UpdateLeadSchema = CreateLeadSchema.partial();

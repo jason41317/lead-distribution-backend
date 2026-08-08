@@ -1,13 +1,16 @@
 import prisma from "../../prisma/prisma.js";
-import { Prisma } from "@prisma/client";
+import { LeadStatus, Prisma } from "@prisma/client";
 
 class LeadRepository {
-  async findAll(page: number, limit: number, search: string) {
+  async findAll(page: number, limit: number, search: string, brokerId?: number, formId?: number, status?: LeadStatus) {
     const skip = (page - 1) * limit;
     const whereClause = {
       name: {
         contains: search,
-      }
+      },
+      ...(status ? { status } : {}),
+      ...(brokerId ? { brokerId } : {}),
+      ...(formId ? { formId } : {}),
     };
 
     const [items, total] = await prisma.$transaction([
@@ -45,6 +48,24 @@ class LeadRepository {
       },
     });
   }
+
+  async findDuplicate(
+    email: string,
+    excludeId: number,
+  ) {
+    return prisma.lead.findFirst({
+      where: {
+        id: {
+          not: excludeId,
+        },
+        OR: [
+          {
+            email,
+          },
+        ],
+      },
+    });
+  };
 
   findById(id: number) {
     return prisma.lead.findUnique({

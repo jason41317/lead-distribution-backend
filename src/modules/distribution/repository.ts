@@ -11,8 +11,8 @@ class DistributionRepository {
         createdAt: "desc",
       },
       include: {
-        form: true
-      }
+        form: true,
+      },
     });
   }
 
@@ -22,14 +22,14 @@ class DistributionRepository {
         id,
       },
       include: {
-        brokers: true
-      }
+        brokers: true,
+      },
     });
   }
 
   create(data: Prisma.DistributionCreateInput) {
     return prisma.distribution.create({
-      data
+      data,
     });
   }
 
@@ -59,6 +59,25 @@ class DistributionRepository {
     });
 
     return prisma.distributionBroker.createMany({ data });
+  }
+
+  async findByFormId(formId: number) {
+    return prisma.distribution.findFirst({
+      where: {
+        formId,
+        deletedAt: null
+      },
+      include: {
+        brokers: {
+          where: {
+            active: true,
+          },
+          include: {
+            broker: true,
+          },
+        },
+      },
+    });
   }
 }
 

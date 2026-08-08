@@ -11,6 +11,7 @@ router.use(authMiddleware);
 router.post("/", leadController.store);
 router.get("/", leadController.index);
 router.get("/:id", leadController.show);
+router.put("/:id", leadController.update);
 
 
 export default router;

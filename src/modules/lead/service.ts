@@ -1,68 +1,90 @@
-import { Prisma } from "@prisma/client";
+import { LeadStatus, Prisma } from "@prisma/client";
 import leadRepository from "./repository.js";
 import NotFoundError from "../../errors/NotFoundError.js";
 import { CreateLeadRequest, UpdateLeadRequest } from "./schema.js";
+import { leadBrokerQueue } from "../../queues/lead-broker.queue.js";
 
 class LeadService {
-    async findAll(page: number, limit: number, search: string) {
-        const { items, total } = await leadRepository.findAll(page, limit, search);
-    
-        const totalPages = Math.ceil(total / limit);
-    
-        return {
-          items,
-          meta: {
-            page,
-            limit,
-            total,
-            totalPages,
-          },
-        };
-      }
+  async findAll(page: number, limit: number, search: string, brokerId: number, formId: number, status: LeadStatus) {
+    const { items, total } = await leadRepository.findAll(page, limit, search, brokerId, formId, status);
 
-    async findById(id: number) {
-        const lead = await leadRepository.findById(id);
+    const totalPages = Math.ceil(total / limit);
 
-        if (!lead) {
-            throw new NotFoundError("Lead not found");
-        }
+    return {
+      items,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
+  }
 
-        return lead;
+  async findById(id: number) {
+    const lead = await leadRepository.findById(id);
+
+    if (!lead) {
+      throw new NotFoundError("Lead not found");
     }
 
-    async create(data: CreateLeadRequest) {
-        const { formId, ...leadData } = data
-        const lead: Prisma.LeadCreateInput = {
-            ...leadData,
-            form: { connect: { id: formId } },
-            status: "unsent",
-        }
-        return leadRepository.create(lead);
+    return lead;
+  }
+
+  async create(data: CreateLeadRequest) {
+    const { formId, ...leadData } = data;
+    const l: Prisma.LeadCreateInput = {
+      ...leadData,
+      form: { connect: { id: formId } },
+      status: "unsent",
+    };
+
+    const lead = await leadRepository.create(l);
+
+    console.log(`Lead created: ${lead.id}`);
+
+    const job = await leadBrokerQueue.add("bind-broker", {
+      leadId: lead.id,
+    });
+
+    console.log(`Broker binding job added: ${job.id}`);
+
+    return lead;
+  }
+
+  async update(id: number, data: UpdateLeadRequest) {
+    const lead = await leadRepository.findById(id);
+    const { formId, brokerId, ...leadData } = data;
+    const l = {
+      ...leadData,
+      ...(formId !== undefined ? { form: { connect: { id: formId } } } : {}),
+      ...(brokerId !== undefined
+        ? { broker: { connect: { id: brokerId } }, status: "sent" }
+        : {}),
+    };
+
+    if (!lead) {
+      throw new NotFoundError("Lead not found");
     }
 
-    async update(id: number, data: UpdateLeadRequest) {
-        const lead = await leadRepository.findById(id);
+    return leadRepository.update(id, l as Prisma.LeadUpdateInput);
+  }
 
-        if (!lead) {
-            throw new NotFoundError("Lead not found");
-        }
+  async delete(id: number) {
+    const lead = await leadRepository.findById(id);
 
-        return leadRepository.update(id, data as Prisma.LeadUpdateInput);
+    if (!lead) {
+      throw new NotFoundError("Lead not found");
     }
+    await leadRepository.update(id, {
+      deletedAt: new Date(),
+    } as Prisma.BrokerUpdateInput);
+    // await leadRepository.delete(id);
 
-    async delete(id: number) {
-        const lead = await leadRepository.findById(id);
-
-        if (!lead) {
-            throw new NotFoundError("Lead not found");
-        }
-        await leadRepository.update(id, { deletedAt: new Date() } as Prisma.BrokerUpdateInput);
-        // await leadRepository.delete(id);
-
-        return {
-            message: "Lead deleted successfully",
-        };
-    }
+    return {
+      message: "Lead deleted successfully",
+    };
+  }
 }
 
 export default new LeadService();
